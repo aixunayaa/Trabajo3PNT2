@@ -1,29 +1,28 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+import FormularioView from '../views/FormularioView.vue'
+import UsuariosView from '../views/usuariosView.vue' 
 
-import FormularioView from './views/FormularioView.vue' 
-import UsuariosView from './usuariosView.vue'          
-
-Vue.use(VueRouter)
+Vue.use(VueRouter) 
 
 const routes = [
   {
-    path: '/',
+    path: '/', 
     name: 'Formulario',
     component: FormularioView
   },
   {
-    path: '/usuarios',
+    path: '/usuarios', 
     name: 'Usuarios',
-    component: UsuariosView
+    component: UsuariosView 
   }
 ]
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: 'history', 
   base: process.env.BASE_URL,
-  routes
+  routes 
 })
 
 export default router
