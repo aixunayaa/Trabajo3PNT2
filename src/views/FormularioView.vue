@@ -39,14 +39,14 @@
       </div>
 
       <button type="submit" class="btn btn-primary" :disabled="!isFormValid">
-        Agregar
+        Agregar Usuario
       </button>
     </form>
 
     <hr />
 
-    <h3>Datos ingresados</h3>
-    <table class="table table-striped" v-if="usuarios.length">
+    <h3>Datos ingresados en este formulario (solo en esta sesión)</h3>
+    <table class="table table-striped" v-if="usuariosIngresados.length">
       <thead>
         <tr>
           <th>Nombre</th>
@@ -55,18 +55,20 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(usuario, index) in usuarios" :key="index">
+        <tr v-for="(usuario, index) in usuariosIngresados" :key="index">
           <td>{{ usuario.nombre }}</td>
           <td>{{ usuario.edad }}</td>
           <td>{{ usuario.email }}</td>
         </tr>
       </tbody>
     </table>
+    <p v-else class="text-muted">No hay usuarios agregados en esta sesión.</p>
   </div>
 </template>
 
 <script>
 export default {
+  name: 'FormularioView',
   data() {
     return {
       form: {
@@ -74,19 +76,23 @@ export default {
         edad: null,
         email: ''
       },
-      errors: {},
-      usuarios: []
+      errors: {
+        nombre: null,
+        edad: null,
+        email: null
+      },
+      usuariosIngresados: []
     }
   },
   computed: {
     isFormValid() {
       return (
-        !this.errors.nombre &&
-        !this.errors.edad &&
-        !this.errors.email &&
         this.form.nombre &&
         this.form.edad !== null &&
-        this.form.email
+        this.form.email &&
+        !this.errors.nombre &&
+        !this.errors.edad &&
+        !this.errors.email
       )
     }
   },
@@ -105,6 +111,8 @@ export default {
       const edad = this.form.edad
       if (edad === null || edad === '') {
         this.errors.edad = 'La edad es requerida.'
+      } else if (isNaN(edad)) {
+        this.errors.edad = 'La edad debe ser un número.'
       } else if (edad < 18 || edad > 120) {
         this.errors.edad = 'La edad debe estar entre 18 y 120 años.'
       } else {
@@ -128,13 +136,28 @@ export default {
       this.validateEmail()
 
       if (this.isFormValid) {
-        this.usuarios.push({ ...this.form })
-       
+        this.usuariosIngresados.push({ ...this.form })
+
         this.form.nombre = ''
         this.form.edad = null
         this.form.email = ''
+
+        this.errors.nombre = null
+        this.errors.edad = null
+        this.errors.email = null
+
+        alert('Usuario agregado localmente. Revisa la tabla de "Datos ingresados".')
+      } else {
+        alert('Por favor, corrige los errores del formulario.')
       }
     }
+  },
+  mounted() {
+    this.validateNombre();
+    this.validateEdad();
+    this.validateEmail();
   }
 }
 </script>
+
+
